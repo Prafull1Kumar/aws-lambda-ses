@@ -1,0 +1,8 @@
+{
+    "AwsAccessKeyId": "",
+    "AwsSecretAccessKey": "",
+    "AwsSesRegion": "",
+    "MailFrom": "",
+    "MailTo": "",
+    "SentryDsn": ""
+  }
