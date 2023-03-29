@@ -3,8 +3,8 @@ import os
 
 import sentry_sdk
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
-from template_loader import env
-from ses_mailer import send_email
+from jinja2 import Environment, select_autoescape, FileSystemLoader
+from simple_ses_mailer.mailers import SesEmailMessage
 
 
 sentry_sdk.init(
@@ -56,14 +56,20 @@ def lambda_handler(event, context):
                 }
 
             # Send email if name has been specified
-            mail_to = os.getenv('MAIL_TO')
+            env = Environment(
+                loader=FileSystemLoader('templates'),
+                autoescape=select_autoescape(['html', 'xml'])
+            )
             template = env.get_template('mail.html')
             html = template.render(name=your_name)
 
-            send_email(mail_subject="AWS Lambda Email",
-                       mail_body=html,
-                       mail_to=[mail_to],
-                       )
+            msg = SesEmailMessage(
+                subject='AWS Lambda Email',
+                body_html=html,
+                embedded_attachments_list=['templates/logo.png'],
+                mail_to=os.getenv('MAIL_TO')
+            )
+            msg.send()
 
             return {
                 "statusCode": 200,
