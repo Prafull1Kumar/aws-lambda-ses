@@ -12,25 +12,6 @@ Globals:
     MemorySize: 1024
 
 # Environment variables
-Parameters:
-  AwsAccessKeyId:
-    Type: String
-    NoEcho: true
-  AwsSecretAccessKey:
-    Type: String
-    NoEcho: true
-  AwsSesRegion:
-    Type: String
-    NoEcho: true
-  MailFrom:
-    Type: String
-    NoEcho: true
-  MailTo:
-    Type: String
-    NoEcho: true
-  SentryDsn:
-    Type: String
-    NoEcho: true
 
 Resources:
   SendEmailFunction:
@@ -47,14 +28,6 @@ Resources:
           Properties:
             Path: /send_email
             Method: any
-      Environment:
-        Variables:
-          AWS_SES_ACCESS_KEY_ID: !Ref AwsAccessKeyId
-          AWS_SES_SECRET_ACCESS_KEY: !Ref AwsSecretAccessKey
-          AWS_SES_REGION: !Ref AwsSesRegion
-          MAIL_FROM: !Ref MailFrom
-          MAIL_TO: !Ref MailTo
-          SENTRY_DSN: !Ref SentryDsn
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
