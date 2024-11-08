@@ -26,18 +26,22 @@ def lambda_handler(event, context):
     print('starting processing')
     
     # Extract database configuration from event
-    host = 'localhost'
-    database = 'app'
-    user = 'postgres'
-    password = 'Pra@1ful'
-    port = '5432'
-    print(event)
-
-    # Handle local testing scenario
-    if host == 'localhost':
-        print('local testing')
-        host = 'host.docker.internal'
-
+    # host = event.get('DB_HOST')
+    # database = event.get('DB_DATABASE')
+    # user = event.get('DB_USER')
+    # password = event.get('DB_PASSWORD')
+    # port = event.get('DB_PORT')
+    # schema = event.get('DB_SCHEMA')
+    # base_url = event.get('BaseUrl')
+    # print(event)
+    # if host == 'localhost':  ## for testing
+    #     print('local testing')
+    #     host = 'host.docker.internal'
+    host = 'host.docker.internal'
+    password='Pra@1ful'
+    user='postgres'
+    port=5432
+    database='app'
     # Create database connection
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{database}')
     Session = sessionmaker(bind=engine)
@@ -78,16 +82,30 @@ def lambda_handler(event, context):
             user.status = 'NOT_VERIFIED'
             session.commit()
 
+
         except Exception as e:
             # Handle and record any errors
             print("Error sending email:", str(e))
             errors[recipient_email] = e
 
     # Return response with success and error information
+    # return {
+    #     'statusCode': 200,
+    #     'body': json.dumps({'success': success, 'errors': errors})
+    # }
+    print(errors)
     return {
-        'statusCode': 200,
-        'body': json.dumps({'success': success, 'errors': errors})
-    }
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'  # For CORS support
+            },
+            'body': json.dumps({
+                'message': 'Email sent successfully',
+                'success': True
+                # Add any other response data here
+            })
+        }
 
 
 # Function to send email using AWS SES
